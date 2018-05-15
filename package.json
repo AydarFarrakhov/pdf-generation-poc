@@ -1,0 +1,15 @@
+{
+  "name": "pdf-generation-poc",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.0.0-beta.42",
+    "meteor-node-stubs": "^0.3.2",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "simpl-schema": "^1.5.0",
+    "utf8-fdf-generator": "0.0.3"
+  }
+}
