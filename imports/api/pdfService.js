@@ -1,38 +1,40 @@
+import { storeFile } from './gridService';
+
 const fs = Npm.require('fs');
+const hummus = require('hummus');
+import fillForm from './lib/pdf-form-fill';
+
 const sourcePDF = Assets.absoluteFilePath('PDFFormWithFields.pdf');
 
-const child_process = Npm.require('child_process');
-const exec = child_process.exec;
-const fdf = Npm.require('utf8-fdf-generator');
-
-function fillFormWithFlatten(sourceFile, fieldValues, shouldFlatten, callback) {
+function fillFormWithFlatten(sourceFile, fieldValues) {
 
   const randomSequence = Math.random().toString(36).substring(7);
   const currentTime = new Date().getTime();
-  const tempFDF = "temp_data" + currentTime + randomSequence + ".fdf";
-  const destinationFile =  currentTime + randomSequence + ".pdf";
-  fdf.generator(fieldValues, tempFDF);
+  const destinationFile = currentTime + randomSequence + ".pdf";
+  const writer = hummus.createWriterToModify(sourceFile, { modifiedFilePath: destinationFile });
 
-  const command = `pdftk ${sourceFile} fill_form ${tempFDF} output ${destinationFile} flatten`;
-  exec(command, {}, function (error) {
-    if (error) {
-      console.log('exec error: ' + error);
-      return callback(error);
-    }
-    fs.unlink(tempFDF, function (err) {
-      if (err) {
-        return callback(err);
-      }
-      return callback(undefined, destinationFile);
+  fillForm(writer, fieldValues);
+  writer.end();
+  return storeFile(destinationFile)
+    .then(f => removeTempFile(f));
+}
+
+function removeTempFile(file) {
+  return new Promise((resolve, reject) => {
+    fs.unlink(file, (err) => {
+      if (err) reject(err);
+      resolve(file);
     });
   });
 }
 
-export function fillPDF(data, callback) {
-  const dataWithError = Object.keys(data).reduce((obj, k) => {
+function fillWithNeedsData(data) {
+  return Object.keys(data).reduce((obj, k) => {
     let value = data[ k ];
-    if (!value || value.length === 0) {
+    if (value === '' || value === undefined || value === null) {
       value = 'needs data';
+    } else {
+      value = value.toString();
     }
     return {
       ...obj,
@@ -40,13 +42,10 @@ export function fillPDF(data, callback) {
     };
   }, {});
 
-  fillFormWithFlatten(sourcePDF, dataWithError, false, function (err, file) {
-    if (err) {
-      console.log(err);
-      callback(err);
-    }
-    console.log("PDF is saved");
-    console.log(file);
-    callback(undefined, file);
-  });
+}
+
+export function fillPDF(data) {
+  const dataWithErrors = fillWithNeedsData(data);
+
+  return fillFormWithFlatten(sourcePDF, dataWithErrors);
 }
