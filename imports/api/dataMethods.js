@@ -23,7 +23,6 @@ Meteor.methods({
 WebApp.connectHandlers.use('/pdf/', (req, res) => {
   const parts = req.url.split("/");
   const fn = parts[1];
-  console.log(fn);
   getFile(fn).then(data => {
     const headers = {
       'Content-Type': 'application/pdf',

@@ -5,7 +5,9 @@ export function storeFile(file) {
   return new Promise((resolve, reject) => {
     const gs = new GridStore(db, file, 'w');
     gs.open((err, gs) => {
+      console.log(err);
       gs.writeFile(file, (err) => {
+        console.log(err);
         if (err) {
           reject(err);
         }
@@ -20,7 +22,6 @@ export function getFile(name) {
   return new Promise((resolve, reject) => {
     GridStore.exist(db, name, (err, isExist) => {
       if (!isExist) {
-        console.log("reject");
         reject("File not found");
         return;
       }
