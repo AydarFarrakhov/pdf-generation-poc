@@ -23,4 +23,3 @@ for (var annotateInd = 0; annotateInd < annotate.length ; annotateInd++) {
   var annotation = annotate[annotateInd];
   highlightError(annotation.page, annotation.rect);
 }
-app.execMenuItem("Save");
