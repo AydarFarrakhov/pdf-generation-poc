@@ -5,18 +5,20 @@ import { fillPDF } from './pdfService';
 
 Meteor.methods({
   'data.insert'(data) {
-    return fillPDF(data).then(pdfName => {
-      const fullData = {
-        ...data,
-        pdfName,
-      };
-      if (!data._id) {
-        Data.insert(fullData);
-      } else {
-        Data.update({_id: data._id }, { $set: fullData });
-      }
-      return fullData;
-    });
+    return fillPDF(data)
+      .then(pdfName => new Promise((resolve) => {
+        const fullData = { ...data, pdfName };
+        if (!data._id) {
+          Data.insert(fullData, (err, data) => {
+            resolve({ ...fullData, _id: data });
+          });
+        } else {
+          Data.update({_id: data._id }, { $set: fullData }, () => {
+            resolve(fullData);
+          });
+        }
+      })
+    );
   },
 });
 

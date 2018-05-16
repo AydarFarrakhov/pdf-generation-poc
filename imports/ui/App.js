@@ -32,6 +32,7 @@ class App extends Component {
 
   save(data) {
     Meteor.call('data.insert', data, (err, res) => {
+      console.log(res);
       if (err) {
         alert(err.message);
       }
