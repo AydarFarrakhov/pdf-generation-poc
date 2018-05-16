@@ -6,7 +6,7 @@ import fillForm from './lib/pdf-form-fill';
 
 const sourcePDF = Assets.absoluteFilePath('PDFFormWithFields.pdf');
 
-function fillFormWithFlatten(sourceFile, fieldValues) {
+function fillFormWithData(sourceFile, fieldValues) {
 
   const randomSequence = Math.random().toString(36).substring(7);
   const currentTime = new Date().getTime();
@@ -47,5 +47,5 @@ function fillWithNeedsData(data) {
 export function fillPDF(data) {
   const dataWithErrors = fillWithNeedsData(data);
 
-  return fillFormWithFlatten(sourcePDF, dataWithErrors);
+  return fillFormWithData(sourcePDF, dataWithErrors);
 }
