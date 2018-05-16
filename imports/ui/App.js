@@ -1,118 +1,173 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
 import { Data } from '../api/data.js';
+import {
+  CssBaseline,
+  List,
+  ListItemText,
+  ListItem,
+  withStyles,
+  AppBar,
+  Drawer,
+  Toolbar,
+  Typography,
+  Divider,
+  Grid,
+  Button,
+} from 'material-ui';
+import BillForm from './BillForm';
 
 class App extends Component {
 
   state = {
-    seller: '',
-    buyer: '',
-    url: '',
+    selected: null,
   };
 
   constructor(props) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
+    this.save = this.save.bind(this);
+    this.setSelected = this.setSelected.bind(this);
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
-
-    console.log("Insert data");
-    console.log(this.state);
-    const { seller, buyer } = this.state;
-    Meteor.call('data.insert', { seller, buyer }, (err, res) => {
+  save(data) {
+    Meteor.call('data.insert', data, (err, res) => {
       console.log(res);
-      this.setState({ url: res });
-    });
-    this.setState({ seller: '', buyer: '' });
-  }
-
-  handleInputChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-
-    this.setState({
-      [ name ]: value
+      alert(err.message);
+      this.setSelected(res);
     });
   }
 
-  renderCurrentData() {
-    const { data } = this.props;
-    if (!data || data.length === 0) return null;
-    const { seller, buyer } = data[ 0 ];
-
+  renderAppBar(classes) {
     return (
-      <div>
-        <div>
-          Seller: {seller}
-        </div>
-        <div>
-          Buyer: {buyer}
-        </div>
-      </div>
-    );
-  }
-
-  renderForm() {
-    const { seller, buyer } = this.state;
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <div>
-          <input
-            type="text"
-            placeholder="Seller"
-            name="seller"
-            value={seller}
-            onChange={this.handleInputChange}/>
-        </div>
-        <div>
-          <input
-            type="text"
-            placeholder="Buyer"
-            name="buyer"
-            value={buyer}
-            onChange={this.handleInputChange}/>
-        </div>
-        <div>
-          <button>Save</button>
-        </div>
-      </form>
+      <AppBar position="absolute" className={classes.appBar}>
+        <Toolbar>
+          <Typography variant="title" color="inherit" noWrap>
+            Vehicle/Vessel Bill of Sale
+          </Typography>
+        </Toolbar>
+      </AppBar>
     )
   }
 
-  renderLink() {
-    const url = this.state.url;
-    if (!url) return null;
+  renderMenuItem(name, onClick) {
     return (
-      <div>
-        <a href={`/pdf/${url}`}>Download PDF</a>
-      </div>
-    );
+      <Fragment key={name}>
+          <ListItem button onClick={onClick}>
+            <ListItemText primary={name}/>
+          </ListItem>
+          <Divider/>
+      </Fragment>
+    )
+  }
+
+  setSelected(selected) {
+    this.setState({ selected });
+  }
+
+  renderDrawer(classes) {
+    return (
+      <Drawer
+        variant="permanent"
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+      >
+        <div className={classes.toolbar}/>
+        <List component="nav">
+          {this.props.data.map(d => this.renderMenuItem(d.name, () => this.setSelected(d)))}
+          {this.renderMenuItem("New", () => this.setSelected(null))}
+        </List>
+      </Drawer>
+    )
+  }
+
+  showPDF(selected) {
+    if (!selected || !selected.pdfName) {
+      return (
+        <Typography variant="title" color="error" noWrap>
+          Select saved form to see PDF.
+        </Typography>
+      );
+    }
+    const pdfUrl = `/pdf/${selected.pdfName}`;
+    return (
+      <Fragment>
+        <object data={pdfUrl} type="application/pdf" width="100%" height="100%">
+          <p>Your web browser doesn't have a PDF plugin.
+            Instead you can <a href={pdfUrl}>click here to
+              download the PDF file.</a></p>
+        </object>
+        <Button color="primary" component={(props) => <a href={pdfUrl} {...props}/>}>
+          Download
+        </Button>
+      </Fragment>
+    )
+  }
+
+  renderContent() {
+    const { selected } = this.state;
+    return (
+      <Grid container>
+        <Grid xs={12} sm={6} item>
+          <BillForm save={this.save} selected={selected}/>
+        </Grid>
+        <Grid xs={12} sm={6} item>
+          {this.showPDF(selected)}
+        </Grid>
+      </Grid>
+    )
   }
 
   render() {
+    const { classes } = this.props;
     return (
-      <div className="container">
-        <header>
-          <h1>PDF Form</h1>
-        </header>
-        <div>
-          {this.renderForm()}
+      <Fragment>
+        <CssBaseline/>
+        <div className={classes.root}>
+          {this.renderAppBar(classes)}
+          {this.renderDrawer(classes)}
+          <main className={classes.content}>
+            <div className={classes.toolbar}/>
+            {this.renderContent(classes)}
+          </main>
         </div>
-        {this.renderCurrentData()}
-        {this.renderLink()}
-      </div>
+      </Fragment>
     );
   }
 }
+
+const drawerWidth = 240;
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+    zIndex: 1,
+    overflow: 'hidden',
+    position: 'relative',
+    display: 'flex',
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  drawerPaper: {
+    position: 'relative',
+    width: drawerWidth,
+  },
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing.unit * 3,
+    minWidth: 0, // So the Typography noWrap works
+  },
+  toolbar: theme.mixins.toolbar,
+});
+
+const Styled = withStyles(styles)(App);
 
 export default withTracker(() => {
   Meteor.subscribe('data');
   return {
     data: Data.find({}).fetch(),
   };
-})(App);
+})(Styled);

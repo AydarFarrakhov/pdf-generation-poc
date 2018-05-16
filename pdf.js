@@ -1,23 +1,26 @@
-function highlighError(page, quads) {
+function highlightError(page, rect) {
   this.addAnnot({
     page: page,
-    type: "Underline",
-    quads: quads,
+    type: "Square",
+    rect: rect,
     contents: "Needs Data",
     author: "Intelage",
     strokeColor: color.red
   });
 }
 
-for (var p = 0; p < this.numPages; p++) {
-  for (var n = 0; n < this.getPageNumWords(p) - 1; n++) {
-    var first = this.getPageNthWord(p, n);
-    var second = this.getPageNthWord(p, n + 1);
-    if (first === "needs" && second === "data") {
-      var quadsNeeds = this.getPageNthWordQuads(p, n);
-      var quadsData = this.getPageNthWordQuads(p, n + 1);
-      highlighError(p, quadsNeeds);
-      highlighError(p, quadsData);
-    }
+var annotate = [];
+
+for (var fieldNumber = 0; fieldNumber < numFields; fieldNumber++) {
+  var field = getField(getNthFieldName(fieldNumber));
+  field.value = field.value + '';
+  if (field.value === "needs data") {
+    annotate.push({ page: field.page, rect: field.rect});
   }
 }
+
+for (var annotateInd = 0; annotateInd < annotate.length ; annotateInd++) {
+  var annotation = annotate[annotateInd];
+  highlightError(annotation.page, annotation.rect);
+}
+app.execMenuItem("Save");

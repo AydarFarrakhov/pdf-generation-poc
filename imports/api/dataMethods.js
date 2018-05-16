@@ -1,17 +1,22 @@
-const fs = Npm.require('fs');
+import { getFile } from './gridService';
 
 import Data from './data';
 import { fillPDF } from './pdfService';
 
 Meteor.methods({
   'data.insert'(data) {
-    Data.insert({
-      ...data,
-      updated: new Date(),
+    return fillPDF(data).then(pdfName => {
+      const fullData = {
+        ...data,
+        pdfName,
+      };
+      if (!data._id) {
+        Data.insert(fullData);
+      } else {
+        Data.update({_id: data._id }, { $set: fullData });
+      }
+      return fullData;
     });
-    return new Promise((resolve) => {
-      fillPDF(data, (err, result) => resolve(result));
-    })
   },
 });
 
@@ -19,20 +24,16 @@ WebApp.connectHandlers.use('/pdf/', (req, res) => {
   const parts = req.url.split("/");
   const fn = parts[1];
   console.log(fn);
-  let data;
-  try {
-    data = fs.readFileSync(fn);
-  } catch (err) {
+  getFile(fn).then(data => {
+    const headers = {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename=' + fn
+    };
+    res.writeHead(200, headers);
+    data.stream(true).pipe(res);
+  }).catch((err) => {
     console.log(err);
     res.writeHead(404);
     res.end('Error 404 - Not found.');
-    return;
-  }
-
-  const headers = {
-    'Content-type': 'application/octet-stream',
-    'Content-Disposition': 'attachment; filename=' + fn
-  };
-  res.writeHead(200, headers);
-  res.end(data);
+  });
 });
