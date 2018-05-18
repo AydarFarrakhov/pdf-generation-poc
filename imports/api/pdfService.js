@@ -19,14 +19,8 @@ const options = {
   },
 };
 
-function fillFormWithData(sourceFile, data) {
-
-
+function fillFormWithData(sourceFile, data, destinationFile) {
   return new Promise((resolve, reject) => {
-    const randomSequence = Math.random().toString(36).substring(7);
-    const currentTime = new Date().getTime();
-    const destinationFile = currentTime + randomSequence + ".pdf";
-
     const html = pug.renderFile(sourceFile, data);
     pdf.create(html, options).toStream(function(err, stream){
       stream.pipe(fs.createWriteStream(destinationFile));
@@ -47,6 +41,6 @@ function removeTempFile(file) {
 }
 
 
-export function fillPDF(data) {
-  return fillFormWithData(template, data);
+export function fillPDF(data, destinationName) {
+  return fillFormWithData(template, data, destinationName);
 }

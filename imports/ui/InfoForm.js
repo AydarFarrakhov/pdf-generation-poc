@@ -3,7 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { withStyles, Button, TextField, Grid, Typography } from 'material-ui';
 import PackingForm from './PackingForm';
 
-const EXCLUDED_FIELDS = [ 'name', '_id', 'pdfName', 'packingList' ];
+const EXCLUDED_FIELDS = [ 'name', '_id', 'pdfName', 'packingList', 'processing' ];
 
 class InfoForm extends Component {
 

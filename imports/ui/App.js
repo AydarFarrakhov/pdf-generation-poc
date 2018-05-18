@@ -30,6 +30,14 @@ class App extends Component {
     this.setSelected = this.setSelected.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const selected = this.state.selected;
+    if (selected) {
+      console.log(selected._id);
+      this.setSelected(nextProps.data.filter(d => d._id === selected._id)[0]);
+    }
+  }
+
   save(data) {
     Meteor.call('data.insert', data, (err, res) => {
       console.log(res);
@@ -89,6 +97,13 @@ class App extends Component {
       return (
         <Typography variant="title" color="error" noWrap>
           Select saved form to see PDF.
+        </Typography>
+      );
+    }
+    if (selected.processing) {
+      return (
+        <Typography variant="title" color="primary" noWrap>
+          Generating PDF..
         </Typography>
       );
     }

@@ -3,31 +3,61 @@ import { getFile } from './gridService';
 import Data from './data';
 import { fillPDF } from './pdfService';
 
-function getFullData(data, pdfName) {
-  return {
-    ...data,
-    pdfName,
-  };
+function generateDestinationFileName() {
+  const randomSequence = Math.random().toString(36).substring(7);
+  const currentTime = new Date().getTime();
+  return currentTime + randomSequence + ".pdf";
 }
 
-function updateDataInDB(data, pdfName) {
-  return new Promise((resolve) => {
-    const fullData = getFullData(data, pdfName);
-    if (!data._id) {
-      Data.insert(fullData, (err, data) => {
-        resolve({ ...fullData, _id: data });
-      });
-    } else {
-      Data.update({_id: data._id }, { $set: fullData }, () => {
-        resolve(fullData);
-      });
-    }
+function handlePDFChange(doc, id) {
+  console.log('Handle change');
+  fillPDF({ ...doc }, doc.pdfName)
+    .then(() => {
+        Data.direct.update({_id: id }, { $set: { processing: false } }, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+    });
+}
+
+if (Meteor.isServer) {
+  Meteor.publish('data', function tasksPublication() {
+    return Data.find({}, { sort: { $natural: -1 }});
+  });
+
+  Data.before.insert(function(userId, doc) {
+    const file = generateDestinationFileName();
+    doc.pdfName = file;
+    doc.processing = true;
+  });
+
+  Data.after.insert(function (userId, doc) {
+    handlePDFChange(doc, this._id)
+  });
+
+  Data.before.update(function(userId, doc) {
+    doc.processing = true;
+  });
+
+  Data.after.update(function(userId, doc) {
+    doc.processing = true;
+    handlePDFChange(doc, doc._id)
   });
 }
 
 export function insertData(data) {
-  return fillPDF(data)
-    .then(pdfName => updateDataInDB(data, pdfName));
+  return new Promise((resolve) => {
+    if (!data._id) {
+      Data.insert(data, (err, id) => {
+        resolve({ ...data, _id: id });
+      });
+    } else {
+      Data.update({_id: data._id }, { $set: { ...data } }, () => {
+        resolve(data);
+      });
+    }
+  });
 }
 
 Meteor.methods({

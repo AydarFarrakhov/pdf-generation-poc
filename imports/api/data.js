@@ -11,11 +11,16 @@ const packingSchema = new SimpleSchema({
 });
 
 const dataSchema = new SimpleSchema({
-  pdfName: {
-    type: String,
-  },
   name: {
     type: String,
+  },
+  pdfName: {
+    type: String,
+    optional: true,
+  },
+  processing: {
+    type: Boolean,
+    optional: true,
   },
   shipperName: {
     type: String,
@@ -85,12 +90,6 @@ const dataSchema = new SimpleSchema({
     optional: true,
   },
 });
-
-if (Meteor.isServer) {
-  Meteor.publish('data', function tasksPublication() {
-    return Data.find({}, { sort: { $natural: -1 }});
-  });
-}
 
 
 Data.attachSchema(dataSchema);

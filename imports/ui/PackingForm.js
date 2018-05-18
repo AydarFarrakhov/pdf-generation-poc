@@ -82,7 +82,7 @@ class PackingForm extends Component {
     const { classes } = this.props;
     return (
       <Grid container direction="row">
-        <Grid item direction="row" xs={10} wrap="wrap">
+        <Grid item xs={10}>
             {
               Object.keys(this.state)
                 .map(k => (
