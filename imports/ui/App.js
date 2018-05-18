@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
-import { Data } from '../api/data.js';
+import { Data } from '../api/data';
 import {
   CssBaseline,
   List,
@@ -33,16 +33,15 @@ class App extends Component {
   componentWillReceiveProps(nextProps) {
     const selected = this.state.selected;
     if (selected) {
-      console.log(selected._id);
       this.setSelected(nextProps.data.filter(d => d._id === selected._id)[0]);
     }
   }
 
   save(data) {
     Meteor.call('data.insert', data, (err, res) => {
-      console.log(res);
       if (err) {
         alert(err.message);
+        return;
       }
       this.setSelected(res);
     });

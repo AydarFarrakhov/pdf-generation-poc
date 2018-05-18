@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import Data from '../../api/data';
-import { insertData } from '../../api/dataMethods';
+import { insertData } from '../../api/data/dataMethods';
 
 const sampleData = {
   name: 'Sample data',
@@ -104,7 +104,6 @@ const withoutFields = {
 };
 
 Meteor.startup(() => {
-  console.log('Start fixtures');
   if (Data.find().count() === 0) {
     console.log('Zero');
     insertData(sampleData);

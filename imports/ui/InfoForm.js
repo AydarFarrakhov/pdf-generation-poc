@@ -143,7 +143,7 @@ class InfoForm extends Component {
           <Grid item>
             <Grid container direction="column">
               <Typography variant="title" color="inherit">
-                Packings
+                Packing List
               </Typography>
               {this.renderPackingList()}
               <Grid item >

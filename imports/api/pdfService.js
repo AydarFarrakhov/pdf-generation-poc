@@ -21,9 +21,13 @@ const options = {
 function fillFormWithData(sourceFile, data, destinationFile) {
   return new Promise((resolve, reject) => {
     const html = pug.renderFile(sourceFile, data);
+
     pdf.create(html, options).toStream(async function(err, stream){
+      if (err) {
+        reject(err);
+        return;
+      }
       const location = await storeFile(destinationFile, stream);
-      console.log('resolve');
       resolve(location);
     });
   });
