@@ -1,5 +1,3 @@
-import { getFile } from './gridService';
-
 import Data from './data';
 import { fillPDF } from './pdfService';
 
@@ -27,8 +25,7 @@ if (Meteor.isServer) {
   });
 
   Data.before.insert(function(userId, doc) {
-    const file = generateDestinationFileName();
-    doc.pdfName = file;
+    doc.pdfName = generateDestinationFileName();
     doc.processing = true;
   });
 
@@ -36,12 +33,12 @@ if (Meteor.isServer) {
     handlePDFChange(doc, this._id)
   });
 
-  Data.before.update(function(userId, doc) {
-    doc.processing = true;
+  Data.before.update(function(userId, doc, fieldNames, modifier) {
+    modifier.$set = modifier.$set || {};
+    modifier.$set.processing = true;
   });
 
   Data.after.update(function(userId, doc) {
-    doc.processing = true;
     handlePDFChange(doc, doc._id)
   });
 }
@@ -64,20 +61,4 @@ Meteor.methods({
   'data.insert'(data) {
     return insertData(data);
   },
-});
-
-WebApp.connectHandlers.use('/pdf/', (req, res) => {
-  const parts = req.url.split("/");
-  const fn = parts[1];
-  getFile(fn).then(data => {
-    const headers = {
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'attachment; filename=' + fn
-    };
-    res.writeHead(200, headers);
-    data.stream(true).pipe(res);
-  }).catch((err) => {
-    res.writeHead(404);
-    res.end('Error 404 - Not found.');
-  });
 });

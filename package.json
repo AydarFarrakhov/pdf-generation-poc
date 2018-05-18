@@ -2,10 +2,11 @@
   "name": "pdf-generation-poc",
   "private": true,
   "scripts": {
-    "start": "meteor run"
+    "start": "meteor run --settings settings.json"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.42",
+    "aws-sdk": "^2.242.1",
     "html-pdf": "^2.2.0",
     "install": "^0.11.0",
     "material-ui": "^1.0.0-beta.47",

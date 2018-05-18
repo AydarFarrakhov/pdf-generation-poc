@@ -1,6 +1,5 @@
-import { storeFile } from './gridService';
+import { storeFile } from './filesService';
 
-const fs = Npm.require('fs');
 const pdf = require('html-pdf');
 const pug = require('pug');
 
@@ -22,24 +21,13 @@ const options = {
 function fillFormWithData(sourceFile, data, destinationFile) {
   return new Promise((resolve, reject) => {
     const html = pug.renderFile(sourceFile, data);
-    pdf.create(html, options).toStream(function(err, stream){
-      stream.pipe(fs.createWriteStream(destinationFile));
-      storeFile(destinationFile)
-        .then(f => removeTempFile(f));
-      resolve(destinationFile);
+    pdf.create(html, options).toStream(async function(err, stream){
+      const location = await storeFile(destinationFile, stream);
+      console.log('resolve');
+      resolve(location);
     });
   });
 }
-
-function removeTempFile(file) {
-  return new Promise((resolve, reject) => {
-    fs.unlink(file, (err) => {
-      if (err) reject(err);
-      resolve(file);
-    });
-  });
-}
-
 
 export function fillPDF(data, destinationName) {
   return fillFormWithData(template, data, destinationName);

@@ -103,22 +103,15 @@ class App extends Component {
     if (selected.processing) {
       return (
         <Typography variant="title" color="primary" noWrap>
-          Generating PDF..
+          Generating PDF...
         </Typography>
       );
     }
-    const pdfUrl = `/pdf/${selected.pdfName}`;
+    const pdfUrl = `https://${Meteor.settings.public.AWS.AWS_BUCKET}.s3-us-west-2.amazonaws.com/${selected.pdfName}`;
     return (
-      <Fragment>
-        <object data={pdfUrl} type="application/pdf" width="100%" height="100%">
-          <p>Your web browser doesn't have a PDF plugin.
-            Instead you can <a href={pdfUrl}>click here to
-              download the PDF file.</a></p>
-        </object>
-        <Button color="primary" component={(props) => <a href={pdfUrl} {...props}/>}>
-          Download
-        </Button>
-      </Fragment>
+      <Button color="primary" component={(props) => <a href={pdfUrl} {...props}/>}>
+        Download PDF file
+      </Button>
     )
   }
 
