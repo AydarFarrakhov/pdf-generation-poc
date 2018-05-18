@@ -5,9 +5,7 @@ export function storeFile(file) {
   return new Promise((resolve, reject) => {
     const gs = new GridStore(db, file, 'w');
     gs.open((err, gs) => {
-      console.log(err);
       gs.writeFile(file, (err) => {
-        console.log(err);
         if (err) {
           reject(err);
         }

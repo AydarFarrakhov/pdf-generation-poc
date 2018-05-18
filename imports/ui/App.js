@@ -16,7 +16,7 @@ import {
   Grid,
   Button,
 } from 'material-ui';
-import BillForm from './BillForm';
+import InfoForm from './InfoForm';
 
 class App extends Component {
 
@@ -77,7 +77,7 @@ class App extends Component {
       >
         <div className={classes.toolbar}/>
         <List component="nav">
-          {this.props.data.map(d => this.renderMenuItem(d.name, () => this.setSelected(d)))}
+          {this.props.data.map(d => this.renderMenuItem(d.name, () => this.setSelected(d), d._id))}
           {this.renderMenuItem("New", () => this.setSelected(null))}
         </List>
       </Drawer>
@@ -111,10 +111,10 @@ class App extends Component {
     const { selected } = this.state;
     return (
       <Grid container>
-        <Grid xs={12} sm={6} item>
-          <BillForm save={this.save} selected={selected}/>
+        <Grid xs={12} sm={7} item>
+          <InfoForm save={this.save} selected={selected}/>
         </Grid>
-        <Grid xs={12} sm={6} item>
+        <Grid xs={12} sm={5} item>
           {this.showPDF(selected)}
         </Grid>
       </Grid>

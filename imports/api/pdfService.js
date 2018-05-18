@@ -1,22 +1,40 @@
 import { storeFile } from './gridService';
 
 const fs = Npm.require('fs');
-const hummus = require('hummus');
-import fillForm from './lib/pdf-form-fill';
+const pdf = require('html-pdf');
+const pug = require('pug');
 
-const sourcePDF = Assets.absoluteFilePath('PDFFormWithFields.pdf');
+const template = Assets.absoluteFilePath('template.pug');
 
-function fillFormWithData(sourceFile, fieldValues) {
+const options = {
+  format: 'A4',
+  height: '29.7cm',
+  width: '21cm',
+  type: 'pdf',
+  border: {
+    "top": "1cm",
+    "right": "1cm",
+    "bottom": "1cm",
+    "left": "1cm",
+  },
+};
 
-  const randomSequence = Math.random().toString(36).substring(7);
-  const currentTime = new Date().getTime();
-  const destinationFile = currentTime + randomSequence + ".pdf";
-  const writer = hummus.createWriterToModify(sourceFile, { modifiedFilePath: destinationFile });
+function fillFormWithData(sourceFile, data) {
 
-  fillForm(writer, fieldValues);
-  writer.end();
-  return storeFile(destinationFile)
-    .then(f => removeTempFile(f));
+
+  return new Promise((resolve, reject) => {
+    const randomSequence = Math.random().toString(36).substring(7);
+    const currentTime = new Date().getTime();
+    const destinationFile = currentTime + randomSequence + ".pdf";
+
+    const html = pug.renderFile(sourceFile, data);
+    pdf.create(html, options).toStream(function(err, stream){
+      stream.pipe(fs.createWriteStream(destinationFile));
+      storeFile(destinationFile)
+        .then(f => removeTempFile(f));
+      resolve(destinationFile);
+    });
+  });
 }
 
 function removeTempFile(file) {
@@ -28,24 +46,7 @@ function removeTempFile(file) {
   });
 }
 
-function fillWithNeedsData(data) {
-  return Object.keys(data).reduce((obj, k) => {
-    let value = data[ k ];
-    if (value === '' || value === undefined || value === null) {
-      value = 'needs data';
-    } else {
-      value = value.toString();
-    }
-    return {
-      ...obj,
-      [ k ]: value,
-    };
-  }, {});
-
-}
 
 export function fillPDF(data) {
-  const dataWithErrors = fillWithNeedsData(data);
-
-  return fillFormWithData(sourcePDF, dataWithErrors);
+  return fillFormWithData(template, data);
 }

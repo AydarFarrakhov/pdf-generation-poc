@@ -1,0 +1,239 @@
+mixin valueWithError(value)
+    if (value === undefined || value === null || value === '')
+        span.error Needs Data
+    else
+        span #{value}
+
+doctype html
+head
+    title Packing List
+    style.
+        html, body {
+            font-size: 10px;
+            width: 100%;
+            overflow:hidden;
+            margin: 0;
+        }
+
+        @page {
+            size: A4;
+        }
+
+        .page-title {
+            margin: 0;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .page-title-description {
+            margin: 0;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .content {
+            margin-top: 20px;
+            display: -webkit-flex;
+            -webkit-flex-direction: column;
+        }
+
+        .row:not(:last-child) {
+            display: -webkit-flex;
+            -webkit-flex-direction: row;
+            margin-bottom: 50px;
+        }
+
+        .column {
+            -webkit-flex: 1;
+        }
+
+        .title {
+            font-weight: bold;
+        }
+
+        p {
+            margin: 1px;
+        }
+
+        .info-table .tr .td:first-child {
+            -webkit-justify-content: flex-end;
+            font-weight: bold;
+        }
+
+        .packing-list-container {
+            -webkit-justify-content: center;
+        }
+
+        .packing-list-container .table {
+            max-width: 80%;
+        }
+
+        .metric {
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .metric-row {
+            margin-bottom: 20px;
+        }
+
+        .signature-container .tr .td:first-child{
+            max-width: 80px;
+        }
+
+        .signature-container .tr .td:nth-child(2) {
+            max-width: 300px;
+        }
+
+        .line {
+            width: 150px;
+            border-bottom: 1px solid black;
+        }
+
+        .error {
+            color: red;
+            border: 1px solid red;
+        }
+
+        .table {
+            display: -webkit-flex;
+            -webkit-flex-flow: column nowrap;
+            line-height: 1.5;
+            -webkit-flex: 1 1 auto;
+        }
+
+        .th {
+            display: none;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .th > .td {
+            white-space: normal;
+            -webkit-justify-content: center;
+        }
+
+        .tr {
+            display:-webkit-flex;
+            -webkit-flex-flow: row nowrap;
+        }
+
+        .tfoot {
+            font-weight: bold;
+        }
+
+        .tr.tr-centered .td {
+            -webkit-justify-content: center;
+            -webkit-align-content: center;
+        }
+
+        .td {
+            display: -webkit-flex;
+            -webkit-flex-flow: row nowrap;
+            -webkit-flex-grow: 1;
+            -webkit-flex-basis: 0;
+            padding: 0.2em;
+            word-break: break-word;
+            overflow: hidden;
+            min-width: 0px;
+            -webkit-flex-wrap: wrap;
+        }
+body
+    div
+        h1.page-title Packing List
+        p.page-title-description This material is used for feed production purpose only
+        .content
+            .row
+                .column
+                    p.title Shipper:
+                    p
+                        +valueWithError(shipperName)
+                    p
+                        +valueWithError(shipperAddress)
+                .column
+                    .table.info-table
+                        .tr
+                            .td Date:
+                            .td
+                                +valueWithError(date)
+                        .tr
+                            .td Booking #
+                            .td
+                                +valueWithError(booking)
+                        .tr
+                            .td Contact Number:
+                            .td
+                                +valueWithError(contactNumber)
+                        .tr
+                            .td Point and Country of Origin:
+                            .td
+                                +valueWithError(countryOfOrigin)
+                        .tr
+                            .td Port of Export:
+                            .td
+                                +valueWithError(portOfExport)
+                        .tr
+                            .td Destination Port:
+                            .td
+                                +valueWithError(destinationPort)
+                        .tr
+                            .td Vessel:
+                            .td
+                                +valueWithError(vessel)
+            .row
+                .column
+                    p.title Consignee:
+                    p
+                        +valueWithError(consigneeName)
+                    p
+                        +valueWithError(consigneeAddress)
+                .column
+                    p.title Description of Goods:
+                    p
+                        +valueWithError(descriptionOfGoods)
+            .row.metric-row
+                span.title Metric Tons:
+                span.metric
+                    +valueWithError(tons)
+            .row.packing-list-container
+                - var containerNum = 0
+                - var netLbTotal = 0
+                - var netKgTotal = 0
+                .table
+                    .th.tr.tr-centered
+                        .td Container
+                        .td Seal
+                        .td Net (lb.)
+                        .td Net (kg)
+                    if (packingList === undefined || packingList.length ===0)
+                        span.error Needs Data
+                    else
+                        each packing in packingList
+                            - containerNum += 1
+                            - netKgTotal += packing.netLb
+                            - netLbTotal += packing.netKg
+                            .tr.tr-centered
+                                span.td #{packing.container}
+                                span.td #{packing.seal}
+                                span.td #{packing.netLb}
+                                span.td #{packing.netKg}
+                        .tr.tfoot.tr-centered
+                            .td
+                                +valueWithError(containerNum)
+                            .td TOTALS
+                            .td #{netLbTotal.toFixed(2)}
+                            .td #{netKgTotal.toFixed(2)}
+
+            .row.signature-container
+                .table
+                    .tr
+                        .td Signature:
+                        .td.line
+                    .tr
+                        .td Name:
+                        .td
+                            +valueWithError(signatureName)
+                    .tr
+                        .td Title:
+                        .td
+                            +valueWithError(signatureTitle)

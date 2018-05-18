@@ -3,6 +3,13 @@ import SimpleSchema from 'simpl-schema';
 
 export const Data = new Mongo.Collection('data');
 
+const packingSchema = new SimpleSchema({
+  container: String,
+  seal: String,
+  netLb: Number,
+  netKg: Number,
+});
+
 const dataSchema = new SimpleSchema({
   pdfName: {
     type: String,
@@ -10,71 +17,70 @@ const dataSchema = new SimpleSchema({
   name: {
     type: String,
   },
-  year: {
+  shipperName: {
+    type: String,
+    optional: true,
+  },
+  shipperAddress: {
+    type: String,
+    optional: true,
+  },
+  date: {
+    type: String,
+    optional: true,
+  },
+  booking: {
+    type: String,
+    optional: true,
+  },
+  contactNumber: {
+    type: String,
+    optional: true,
+  },
+  countryOfOrigin: {
+    type: String,
+    optional: true,
+  },
+  portOfExport: {
+    type: String,
+    optional: true,
+  },
+  destinationPort: {
+    type: String,
+    optional: true,
+  },
+  vessel: {
+    type: String,
+    optional: true,
+  },
+  consigneeName: {
+    type: String,
+    optional: true,
+  },
+  consigneeAddress: {
+    type: String,
+    optional: true,
+  },
+  descriptionOfGoods: {
+    type: String,
+    optional: true,
+  },
+  tons: {
     type: Number,
     optional: true,
   },
-  make: {
+  packingList: {
+    type: Array,
+    optional: true,
+  },
+  'packingList.$': {
+    type: packingSchema,
+  },
+  signatureName: {
     type: String,
     optional: true,
   },
-  model: {
-    type: String,
-    optional: true,
-  },
-  licensePlateRegistrationNumber: {
-    type: Number,
-    optional: true,
-  },
-  VINHIN: {
-    type: Number,
-    optional: true,
-  },
-  dateOfSale: {
-    type: String,
-    optional: true,
-  },
-  salePrice: {
-    type: String,
-    optional: true,
-  },
-  sellerNames: {
-    type: String,
-    optional: true,
-  },
-  sellerAddress: {
-    type: String,
-    optional: true,
-  },
-  city: {
-    type: String,
-    optional: true,
-  },
-  state: {
-    type: String,
-    optional: true,
-  },
-  zip: {
-    type: String,
-    optional: true,
-  },
-  buyerNames: {
-    type: String,
-    optional: true,
-  },
-  buyerAddress: {
-    type: String,
-    optional: true,
-  },
-  buyerCity: {
-    type: String,
-    optional: true,
-  },
-  buyerState: {
-    type: String,
-    optional: true,
-  },
-  buyerZip: {
+  signatureTitle: {
     type: String,
     optional: true,
   },
