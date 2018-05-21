@@ -3,30 +3,12 @@ extends common/template
 include common/mixins
 
 block title
-    title Packing List
+    title Certificate of Weight
 
 block style
     style.
-        .info-table .tr .td:first-child {
-            -webkit-justify-content: flex-end;
-            font-weight: bold;
-        }
-
-        .packing-list-container {
-            -webkit-justify-content: center;
-        }
-
-        .packing-list-container .table {
-            max-width: 80%;
-        }
-
-        .metric {
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        .metric-row {
-            margin-bottom: 20px;
+        .row.without-large-padding {
+            margin-bottom: 15px;
         }
 
         .signature-container .tr .td:first-child {
@@ -39,16 +21,13 @@ block style
 
 block content
     div
-        h1.page-title Packing List
-        p.page-title-description This material is used for feed production purpose only
+        h1.page-title Certificate of Weight
+        p.page-title-description Based on certified weight reported by third party transloader.
         .content
             .row
                 .column
                     p.title Shipper:
-                    p
-                        +valueWithError(shipperName)
-                    p
-                        +valueWithError(shipperAddress)
+                    +nameWithAddress(shipper)
                 .column
                     .table.info-table.small-spaces
                         .tr
@@ -62,7 +41,7 @@ block content
                         .tr
                             .td Contract Number:
                             .td
-                                +valueWithError(contactNumber)
+                                +valueWithError(contractNumber)
                         .tr
                             .td Point and Country of Origin:
                             .td
@@ -81,19 +60,23 @@ block content
                                 +valueWithError(vessel)
             .row
                 .column
-                    p.title Consignee:
-                    p
-                        +valueWithError(consigneeName)
-                    p
-                        +valueWithError(consigneeAddress)
+                    .title Consignee:
+                    +nameWithAddress(consignee)
                 .column
-                    p.title Description of Goods:
+                    .title Description of Goods:
                     p
-                        +valueWithError(descriptionOfGoods)
-            .row.metric-row
-                span.title Metric Tons:
-                span.metric
-                    +valueWithError(tons)
+                        +valueWithError(product.name)
+                    p
+                        +valueWithError(product.description)
+
+            .row.without-large-padding
+                .column
+                    .table
+                        .tr
+                            .td.bold Metric Tons
+                            .td.bold
+                                +valueWithError(tons)
+                .column-2
             .row.packing-list-container
                 +listTable(packingList)
 
@@ -105,8 +88,8 @@ block content
                     .tr
                         .td Name:
                         .td
-                            +valueWithError(signatureName)
+                            +valueWithError(sign.name)
                     .tr
                         .td Title:
                         .td
-                            +valueWithError(signatureTitle)
+                            +valueWithError(sign.title)
