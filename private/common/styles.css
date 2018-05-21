@@ -163,3 +163,19 @@ p {
     -webkit-justify-content: flex-end;
     padding-right: 20px;
 }
+
+.bordered {
+    border: 1px solid black;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.font-lg {
+    font-size: 12px;
+}
+
+.full-width {
+    width: 100%;
+}

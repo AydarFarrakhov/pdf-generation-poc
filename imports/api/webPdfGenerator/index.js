@@ -2,6 +2,7 @@ import { packingListData } from './data/packingList';
 import { billOfLading } from './data/billOfLading';
 import { certificateOfOrigin } from './data/certificateOfOrigin';
 import { certificateOfWeight } from './data/certificateOfWeight';
+import { commercialInvoice } from './data/commercialInvoice';
 
 const pdf = require('html-pdf');
 const pug = require('pug');
@@ -11,6 +12,7 @@ const dataMapping = {
   billOfLading: billOfLading,
   certificateOfOrigin: certificateOfOrigin,
   certificateOfWeight: certificateOfWeight,
+  commercialInvoice: commercialInvoice,
 };
 
 const options = {

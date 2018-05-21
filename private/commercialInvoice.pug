@@ -1,0 +1,129 @@
+
+extends common/template
+
+include common/mixins
+
+block title
+    title Commercial Invoice
+
+block style
+    style.
+        .row {
+            margin-bottom: 15px;
+        }
+        .row.small-margin-bottom {
+            margin-bottom: 1px;
+        }
+
+        .row:last-child {
+            margin-bottom: 0 !important;
+        }
+        .row.large-margin-bottom {
+            margin-bottom: 50px;
+        }
+        .invoice-title {
+            padding: 10px 5px;
+        }
+
+block content
+    .content
+        .row
+            .column
+                p.bold.uppercase.font-lg
+                    +valueWithError(company.name)
+                p
+                    +valueWithError(company.addressFirstLine)
+                p
+                    +valueWithError(company.addressSecondLine)
+
+        .row.small-margin-bottom
+            .bold.font-lg.invoice-title.full-width.bordered Commercial Invoice
+        .row.large-margin-bottom
+            .column
+                .table
+                    .tr
+                        .td.bold.td-right INVOICE DATE:
+                        .td.td-2
+                            +valueWithError(invoice.date)
+                    .tr
+                        .td.bold.td-right BUYER:
+                        .td.td-2
+                            +valueWithError(invoice.buyer)
+        .row.large-margin-bottom
+            .column
+                .table
+                    .tr
+                        .td.td-2.td-right.uppercase invoice number:
+                        .td
+                            +valueWithError(invoice.number)
+                    .tr
+                        .td.td-2.td-right.uppercase invoice date:
+                        .td
+                            +valueWithError(invoice.date)
+                    .tr
+                        .td.td-2.td-right.uppercase  contract number:
+                        .td
+                            +valueWithError(invoice.contractNumber)
+                    .tr
+                        .td.td-2.td-right.uppercase  plant orgin:
+                        .td
+                            +valueWithError(invoice.plantOrgin)
+                    .tr
+                        .td.td-2.td-right.uppercase  basis
+                        .td
+                            +valueWithError(invoice.basis)
+                    .tr
+                        .td.td-2.td-right.uppercase  Booking #
+                        .td
+                            +valueWithError(invoice.booking)
+                    .tr
+                        .td.td-2.td-right.uppercase  vessel
+                        .td
+                            +valueWithError(invoice.vessel)
+        .row.small-margin-bottom
+            .column
+                - var totalDue = 0
+                .table
+                    .tr.bordered
+                        .td.uppercase.bold metric tons
+                        .td.td-2.uppercase.bold description of goods
+                        .td.bold PRICE/MT in US$
+                each item in list
+                    .tr
+                        .td.bold
+                            +valueWithError(item.tons)
+                        .td.td-2.bold
+                            +valueWithError(item.description)
+                        .td.bold
+                            +valueWithError(item.price)
+                    - var discount = item.discount ? item.price * item.tons * item.discount : 0
+                    - totalDue += item.tons * item.price - discount
+                    if (discount)
+                        .tr
+                            .td
+                            .td.td-2.bold
+                                +valueWithError(item.discountName)
+                                span  #{(item.discount * 100).toFixed(2)}%
+                            .td
+                                span.red (#{discount.toFixed(2)})
+                .tr.tfoot
+                    .td
+                    .td.td-2.td-right.bold.uppercase total due:
+                    .td.bold #{totalDue.toFixed(2)}
+                .tr.line.full-width
+        .row.large-margin-bottom
+            .column
+                .table
+                    .tr
+                        .td.bold.uppercase payment terms:
+                        .td.td-3.bold
+                            +valueWithError(terms)
+        .row.small-margin-bottom
+            .column
+                .table
+                    .tr
+                        .td Bank Information:
+                        .td.td-3.td-column
+                            +valueWithError(bank.name)
+                            +valueWithError(bank.firstLine)
+                            +valueWithError(bank.secondLine)
