@@ -13,6 +13,9 @@ mixin nameWithAddress(person)
     div
         +valueWithError(person.addressSecondLine)
 
+mixin toPrice(price)
+    -var formattedPrice = price.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+    span $#{formattedPrice}
 
 mixin listTable(list, includeVGM, includeContainerSeal)
     - var containerNum = 0

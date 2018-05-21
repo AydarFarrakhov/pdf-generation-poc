@@ -95,7 +95,11 @@ block content
                         .td.td-2.bold
                             +valueWithError(item.description)
                         .td.bold
-                            +valueWithError(item.price)
+                            if (item.price === undefined || item.price  === null || item.price  === '')
+                                +errorMsg()
+                            else
+                                span
+                                    +toPrice(item.price)
                     - var discount = item.discount ? item.price * item.tons * item.discount : 0
                     - totalDue += item.tons * item.price - discount
                     if (discount)
@@ -105,11 +109,14 @@ block content
                                 +valueWithError(item.discountName)
                                 span  #{(item.discount * 100).toFixed(2)}%
                             .td
-                                span.red (#{discount.toFixed(2)})
+                                span.red (
+                                    +toPrice(discount)
+                                span )
                 .tr.tfoot
                     .td
                     .td.td-2.td-right.bold.uppercase total due:
-                    .td.bold #{totalDue.toFixed(2)}
+                    .td.bold
+                        +toPrice(totalDue)
                 .tr.line.full-width
         .row.large-margin-bottom
             .column
