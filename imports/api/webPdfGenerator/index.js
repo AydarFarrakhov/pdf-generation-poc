@@ -1,10 +1,12 @@
 import { packintListData } from './data/packingList';
+import { billOfLading } from './data/billOfLading';
 
 const pdf = require('html-pdf');
 const pug = require('pug');
 
 const dataMapping = {
-  packingList: packintListData
+  packingList: packintListData,
+  billOfLading: billOfLading,
 };
 
 const options = {
@@ -28,6 +30,7 @@ WebApp.connectHandlers.use('/pdf/', (req, res) => {
     sendError(res, 'Template or data not found');
     return;
   }
+  console.log(`Render template ${templateName}`);
   const html = pug.renderFile(Assets.absoluteFilePath(`${templateName}.pug`), data);
   pdf.create(html, options).toStream(async function(err, stream){
     if (err) {
@@ -41,6 +44,19 @@ WebApp.connectHandlers.use('/pdf/', (req, res) => {
     res.writeHead(200, headers);
     stream.pipe(res);
   });
+});
+
+WebApp.connectHandlers.use('/html/', (req, res) => {
+  const parts = req.url.split("/");
+  const templateName = parts[1];
+  const data = dataMapping[templateName];
+  if (!data || !templateName) {
+    sendError(res, 'Template or data not found');
+    return;
+  }
+  console.log(`Render template ${templateName}`);
+  const html = pug.renderFile(Assets.absoluteFilePath(`${templateName}.pug`), data);
+  res.write(html);
 });
 
 function sendError(res, err) {

@@ -1,0 +1,203 @@
+extends common/template
+
+include common/mixins
+
+mixin personInfo(person)
+    p
+        +valueWithError(person.name)
+    paramp
+        +valueWithError(person.addressFirstLine)
+    div
+        +valueWithError(person.addressSecondLine)
+
+block title
+    title Bill Of Lading
+
+block style
+    style.
+        .grey-background {
+            background-color: lightgrey;
+        }
+
+        .box {
+            width: 50px;
+            height: 12px;
+            border: 1px solid black;
+            text-align: center;
+            vertical-align: center;
+            margin-right: 5px;
+            border-collapse: collapse;
+        }
+
+        .signature-container .td:first-child {
+            max-width: 130px;
+            font-weight: bold;
+        }
+
+        .signature-container .td:nth-child(2) {
+            max-width: 70px;
+        }
+
+        .without-spaces .td {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+block content
+    .content
+        .row
+            .column
+                .table
+                    .tr
+                        .td Contract Number:
+                        .td.td-2
+                            +valueWithError(contractNumber)
+                    .tr
+                        .td Booking Number:
+                        .td.td-2
+                            +valueWithError(bookingNumber)
+                    .tr
+                        .td Product:
+                        .td.td-2
+                            +valueWithError(product.name)
+            .column
+                .table
+                    .tr
+                        .td Contact:
+                        .td.td-column.td-2
+                            +personInfo(contact)
+                    .tr
+                        .td Phone:
+                        .td.td-2
+                            +valueWithError(contact.phone)
+                    .tr
+                        .td Email:
+                        .td.td-2
+                            +valueWithError(contact.email)
+        if (shippersInstructions)
+            .row
+                .column
+                    .underline.red Shipper's Instructions:
+                    .red #{shippersInstructions}
+        .row
+            .column
+                .underline Shipper/Exporter:
+                +personInfo(shipper)
+            .column
+                .underline Consignee:
+                +personInfo(consignee)
+            .column
+                .underline Notify Party:
+                +personInfo(notifyParty)
+        .row
+            .column-3
+                .table
+                    .tr
+                        .td.bold.td-right #{netMt}
+                        .td.bold Net Mt
+                        .td.td-column.td-2
+                            .underline Product Description:
+                            div
+                                +valueWithError(product.name)
+                            div
+                                +valueWithError(product.description)
+                    .tr
+                        .td.bold.td-right #{total}
+                        .td.td-3
+                    .tr
+                        .td.td-right Destination Port:
+                        .td.td-3
+                            span.grey-background
+                                +valueWithError(destination.port)
+                            span , #{destination.country}
+            .column
+        - var VGMTotal = 0
+        .row.packing-list-container
+            - var containerNum = 0
+            - var netLbTotal = 0
+            - var netKgTotal = 0
+            .table
+                .th.tr.tr-centered
+                    .td Container
+                    .td Seal
+                    .td Net (lb.)
+                    .td Net (kg)
+                    .td VGM
+                    .td
+                if (list === undefined || list.length === 0)
+                    span.error Needs Data
+                else
+                    each item in list
+                        - containerNum += 1
+                        - netKgTotal += item.netLb
+                        - netLbTotal += item.netKg
+                        - VGMTotal += item.VGM
+                        .tr.tr-centered
+                            span.td #{item.container}
+                            span.td #{item.seal}
+                            span.td.bold #{item.netLb}
+                            span.td.bold #{item.netKg}
+                            span.td.bold #{item.VGM}
+                            span.td.bold #{item.container} / #{item.seal}
+                    .tr.tfoot.tr-centered
+                        .td
+                            +valueWithError(containerNum)
+                        .td TOTALS
+                        .td #{netLbTotal.toFixed(2)}
+                        .td #{netKgTotal.toFixed(2)}
+                        .td #{VGMTotal.toFixed(2)}
+                        .td
+
+        .row.signature-container
+            .column
+                .table
+                    .tr
+                        .td Verified Gross Mass (VGM):
+                        .td.bold.td-right #{VGMTotal.toFixed(2)}
+                        .td
+                    .tr
+                        .td Signature:
+                        .td.line
+                        .td
+                    .tr
+                        .td Printed Name:
+                        .td.line
+                            +valueWithError(signatureName)
+                        .td
+                    .tr
+                        .td Date:
+                        .td.line
+                            +valueWithError(signatureDate)
+                        .td
+                    .tr.without-spaces
+                        .td.bold.underline Method of Weighing:
+                        .td A
+                        .td
+                            span.box
+                                if (weighingPackedContainer)
+                                    span X
+                            span Weighing of a packed/sealed container
+                    .tr.without-spaces
+                        .td
+                        .td B
+                        .td
+                            span.box
+                                if (weighingAll)
+                                    span X
+                            span Weighing of all packed cargos plus packing material and Tare Weight
+                    .tr.without-spaces
+                        .td.bold.underline Unit of Measure:
+                        .td A
+                        .td
+                            span.box
+                                if (pounds)
+                                    span X
+                            span Pounds (LB)
+                    .tr.without-spaces
+                        .td
+                        .td B
+                        .td
+                            span.box
+                                if (kg)
+                                    span X
+                            span Kilograms (Kg)
