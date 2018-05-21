@@ -1,12 +1,14 @@
-import { packintListData } from './data/packingList';
+import { packingListData } from './data/packingList';
 import { billOfLading } from './data/billOfLading';
+import { certificateOfOrigin } from './data/certificateOfOrigin';
 
 const pdf = require('html-pdf');
 const pug = require('pug');
 
 const dataMapping = {
-  packingList: packintListData,
+  packingList: packingListData,
   billOfLading: billOfLading,
+  certificateOfOrigin: certificateOfOrigin,
 };
 
 const options = {
@@ -57,6 +59,7 @@ WebApp.connectHandlers.use('/html/', (req, res) => {
   console.log(`Render template ${templateName}`);
   const html = pug.renderFile(Assets.absoluteFilePath(`${templateName}.pug`), data);
   res.write(html);
+  res.end();
 });
 
 function sendError(res, err) {

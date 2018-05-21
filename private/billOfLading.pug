@@ -2,14 +2,6 @@ extends common/template
 
 include common/mixins
 
-mixin personInfo(person)
-    p
-        +valueWithError(person.name)
-    paramp
-        +valueWithError(person.addressFirstLine)
-    div
-        +valueWithError(person.addressSecondLine)
-
 block title
     title Bill Of Lading
 
@@ -25,7 +17,7 @@ block style
             border: 1px solid black;
             text-align: center;
             vertical-align: center;
-            margin-right: 5px;
+            margin-right: 1px;
             border-collapse: collapse;
         }
 
@@ -35,19 +27,18 @@ block style
         }
 
         .signature-container .td:nth-child(2) {
-            max-width: 70px;
+            max-width: 60px;
         }
 
-        .without-spaces .td {
-            padding-top: 0;
-            padding-bottom: 0;
+        .box-td {
+            margin: 0;
         }
 
 block content
     .content
         .row
             .column
-                .table
+                .table.small-spaces
                     .tr
                         .td Contract Number:
                         .td.td-2
@@ -61,11 +52,11 @@ block content
                         .td.td-2
                             +valueWithError(product.name)
             .column
-                .table
+                .table.small-spaces
                     .tr
                         .td Contact:
                         .td.td-column.td-2
-                            +personInfo(contact)
+                            +nameWithAddress(contact)
                     .tr
                         .td Phone:
                         .td.td-2
@@ -78,22 +69,24 @@ block content
             .row
                 .column
                     .underline.red Shipper's Instructions:
-                    .red #{shippersInstructions}
+                    .red
+                        +valueWithError(shippersInstructions)
         .row
             .column
                 .underline Shipper/Exporter:
-                +personInfo(shipper)
+                +nameWithAddress(shipper)
             .column
                 .underline Consignee:
-                +personInfo(consignee)
+                +nameWithAddress(consignee)
             .column
                 .underline Notify Party:
-                +personInfo(notifyParty)
+                +nameWithAddress(notifyParty)
         .row
             .column-3
                 .table
                     .tr
-                        .td.bold.td-right #{netMt}
+                        .td.bold.td-right
+                            +valueWithError(netMt)
                         .td.bold Net Mt
                         .td.td-column.td-2
                             .underline Product Description:
@@ -102,52 +95,22 @@ block content
                             div
                                 +valueWithError(product.description)
                     .tr
-                        .td.bold.td-right #{total}
+                        .td.bold.td-right
+                            +valueWithError(total)
                         .td.td-3
                     .tr
                         .td.td-right Destination Port:
                         .td.td-3
                             span.grey-background
                                 +valueWithError(destination.port)
-                            span , #{destination.country}
+                            span ,
+                            +valueWithError(destination.country)
             .column
-        - var VGMTotal = 0
         .row.packing-list-container
-            - var containerNum = 0
-            - var netLbTotal = 0
-            - var netKgTotal = 0
-            .table
-                .th.tr.tr-centered
-                    .td Container
-                    .td Seal
-                    .td Net (lb.)
-                    .td Net (kg)
-                    .td VGM
-                    .td
-                if (list === undefined || list.length === 0)
-                    span.error Needs Data
-                else
-                    each item in list
-                        - containerNum += 1
-                        - netKgTotal += item.netLb
-                        - netLbTotal += item.netKg
-                        - VGMTotal += item.VGM
-                        .tr.tr-centered
-                            span.td #{item.container}
-                            span.td #{item.seal}
-                            span.td.bold #{item.netLb}
-                            span.td.bold #{item.netKg}
-                            span.td.bold #{item.VGM}
-                            span.td.bold #{item.container} / #{item.seal}
-                    .tr.tfoot.tr-centered
-                        .td
-                            +valueWithError(containerNum)
-                        .td TOTALS
-                        .td #{netLbTotal.toFixed(2)}
-                        .td #{netKgTotal.toFixed(2)}
-                        .td #{VGMTotal.toFixed(2)}
-                        .td
-
+            +listTable(list, true, true)
+        - var VGMTotal = 0
+        each item in list
+            - VGMTotal += item.VGM
         .row.signature-container
             .column
                 .table
@@ -169,34 +132,34 @@ block content
                         .td.line
                             +valueWithError(signatureDate)
                         .td
-                    .tr.without-spaces
+                    .tr
                         .td.bold.underline Method of Weighing:
                         .td A
-                        .td
+                        .td.box-td
                             span.box
                                 if (weighingPackedContainer)
                                     span X
                             span Weighing of a packed/sealed container
-                    .tr.without-spaces
+                    .tr
                         .td
                         .td B
-                        .td
+                        .td.box-td
                             span.box
                                 if (weighingAll)
                                     span X
                             span Weighing of all packed cargos plus packing material and Tare Weight
-                    .tr.without-spaces
+                    .tr
                         .td.bold.underline Unit of Measure:
                         .td A
-                        .td
+                        .td.box-td
                             span.box
                                 if (pounds)
                                     span X
                             span Pounds (LB)
-                    .tr.without-spaces
+                    .tr
                         .td
                         .td B
-                        .td
+                        .td.box-td
                             span.box
                                 if (kg)
                                     span X

@@ -1,4 +1,4 @@
-export const packintListData = {
+export const packingListData = {
   shipperName: 'Valero Marketing and Supply Company',
   shipperAddress: 'One Valero Wat San Antonio, TX 000000--0000',
   date: 'February 4, 2018',

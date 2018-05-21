@@ -50,7 +50,7 @@ block content
                     p
                         +valueWithError(shipperAddress)
                 .column
-                    .table.info-table
+                    .table.info-table.small-spaces
                         .tr
                             .td Date:
                             .td
@@ -95,33 +95,7 @@ block content
                 span.metric
                     +valueWithError(tons)
             .row.packing-list-container
-                - var containerNum = 0
-                - var netLbTotal = 0
-                - var netKgTotal = 0
-                .table
-                    .th.tr.tr-centered
-                        .td Container
-                        .td Seal
-                        .td Net (lb.)
-                        .td Net (kg)
-                    if (packingList === undefined || packingList.length === 0)
-                        span.error Needs Data
-                    else
-                        each packing in packingList
-                            - containerNum += 1
-                            - netKgTotal += packing.netLb
-                            - netLbTotal += packing.netKg
-                            .tr.tr-centered
-                                span.td #{packing.container}
-                                span.td #{packing.seal}
-                                span.td #{packing.netLb}
-                                span.td #{packing.netKg}
-                        .tr.tfoot.tr-centered
-                            .td
-                                +valueWithError(containerNum)
-                            .td TOTALS
-                            .td #{netLbTotal.toFixed(2)}
-                            .td #{netKgTotal.toFixed(2)}
+                +listTable(packingList)
 
             .row.signature-container
                 .table

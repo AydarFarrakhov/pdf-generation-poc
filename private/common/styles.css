@@ -72,6 +72,11 @@ p {
     width: 150px;
     border-bottom: 1px solid black;
     margin-bottom: 0.3em;
+    min-height: 20px;
+}
+
+.td.line {
+    min-height: initial;
 }
 
 .error {
@@ -84,6 +89,14 @@ p {
     -webkit-flex-flow: column nowrap;
     line-height: 1.5;
     -webkit-flex: 1 1 auto;
+}
+
+.table.small-spaces .td {
+    padding: 0 0.2em;
+}
+
+.table.small-spaces .tr {
+    margin: 0 1px;
 }
 
 .th {
@@ -101,9 +114,12 @@ p {
     display: -webkit-flex;
     -webkit-flex-flow: row nowrap;
     margin: 1px;
+    page-break-inside: avoid;
+    float:none;
 }
 
-.tfoot {
+.tr.tfoot {
+    margin-top: 30px;
     font-weight: bold;
 }
 
@@ -117,11 +133,18 @@ p {
     -webkit-flex-flow: row nowrap;
     -webkit-flex-grow: 1;
     -webkit-flex-basis: 0;
-    padding: 0.3em;
+    padding: 0.3em 0.2em;
     word-break: break-word;
     overflow: hidden;
     min-width: 0;
     -webkit-flex-wrap: wrap;
+    page-break-inside: avoid;
+    float:none;
+}
+
+.td * {
+    page-break-inside: avoid;
+    float:none;
 }
 
 .td.td-2 {

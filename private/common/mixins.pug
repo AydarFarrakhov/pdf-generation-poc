@@ -3,3 +3,57 @@ mixin valueWithError(value)
         span.error Needs Data
     else
         span #{value}
+
+
+mixin nameWithAddress(person)
+    p
+        +valueWithError(person.name)
+    paramp
+        +valueWithError(person.addressFirstLine)
+    div
+        +valueWithError(person.addressSecondLine)
+
+
+mixin listTable(list, includeVGM, includeContainerSeal)
+    - var containerNum = 0
+    - var netLbTotal = 0
+    - var netKgTotal = 0
+    - var VGMTotal = 0
+    .table.small-spaces
+        .th.tr.tr-centered
+            .td Container
+            .td Seal
+            .td Net (lb.)
+            .td Net (kg)
+            if includeVGM
+                .td VGM
+            if includeContainerSeal
+                .td
+        if (list === undefined || list.length === 0)
+            span.error Needs Data
+        else
+            each item in list
+                - containerNum += 1
+                - netKgTotal += item.netLb
+                - netLbTotal += item.netKg
+                - VGMTotal += item.VGM
+                .tr.tr-centered
+                    span.td #{item.container}
+                    span.td #{item.seal}
+                    span.td.bold #{item.netLb}
+                    span.td.bold #{item.netKg}
+                    if includeVGM
+                        span.td.bold #{item.VGM}
+                    if includeContainerSeal
+                        span.td.bold #{item.container} / #{item.seal}
+
+            .tr.tfoot.tr-centered
+                .td
+                    +valueWithError(containerNum)
+                .td TOTALS
+                .td #{netLbTotal.toFixed(2)}
+                .td #{netKgTotal.toFixed(2)}
+                if includeVGM
+                    .td #{VGMTotal.toFixed(2)}
+                if includeContainerSeal
+                    .td

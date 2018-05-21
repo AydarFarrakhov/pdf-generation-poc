@@ -1,0 +1,91 @@
+extends common/template
+
+include common/mixins
+
+block title
+    title Certificate of Origin
+
+block style
+    style.
+        .row.without-large-padding {
+            margin-bottom: 15px;
+        }
+
+block content
+    div
+        h1.page-title Certificate of Origin
+        .content
+            .row
+                .column
+                    p.title Shipper:
+                    +nameWithAddress(shipper)
+                .column
+                    .column
+                        .table.info-table.small-spaces
+                            .tr
+                                .td.bold Booking #
+                                .td
+                                    +valueWithError(booking)
+                            .tr
+                                .td.bold Contract Number:
+                                .td
+                                    +valueWithError(contractNumber)
+                            .tr
+                                .td.bold Point and Country of Origin:
+                                .td
+                                    +valueWithError(countryOfOrigin)
+                            .tr
+                                .td.bold Port of Export:
+                                .td
+                                    +valueWithError(portOfExport)
+                            .tr
+                                .td.bold Destination Port:
+                                .td
+                                    +valueWithError(destinationPort)
+            .row
+                .column
+                    .title Consignee:
+                    +nameWithAddress(consignee)
+                .column
+                    .title Description of Goods:
+                    p
+                        +valueWithError(product.name)
+                    p
+                        +valueWithError(product.description)
+            .row.without-large-padding
+                .column
+                    .table
+                        .tr
+                            .td.bold Metric Tons
+                            .td.bold
+                                +valueWithError(tons)
+                .column-2
+            .row.packing-list-container
+                +listTable(packingList)
+
+            .row
+                .column
+                    div
+                        span The undersigned (Owner or Agent)
+                        +valueWithError(sign.name)
+                        span  for
+                        +valueWithError(sign.for)
+                        span , does hereby declare the above named shipper, the goods described above were shipped on the above dated and consigned as indicated and are product of the
+                        +valueWithError(sign.country)
+                    .line
+                    div Signature of Owner or Agent
+                    .line
+                    .table
+                        .tr
+                            .td Certificate of Origin was certified on:
+                            .td.line
+                                +valueWithError(sign.date)
+                            .td
+                    div The Crawfordsville Chamber of Commerce certifies, in reliance on the exporter's representation and not on the basis of independent verification that, to the best of its knowledge and belief, the products named in this document originated in the
+                        +valueWithError(sign.country)
+                    .table
+                        .tr
+                            .td.line
+                            .td The Crawfordsville Chamber of Commerce Organization Name
+                        .tr
+                            .td.td-2 Signature Line
