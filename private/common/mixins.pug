@@ -1,0 +1,5 @@
+mixin valueWithError(value)
+    if (value === undefined || value === null || value === '')
+        span.error Needs Data
+    else
+        span #{value}

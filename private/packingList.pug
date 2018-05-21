@@ -1,60 +1,12 @@
-mixin valueWithError(value)
-    if (value === undefined || value === null || value === '')
-        span.error Needs Data
-    else
-        span #{value}
+extends common/template
 
-doctype html
-head
+include common/mixins
+
+block title
     title Packing List
+
+block style
     style.
-        html, body {
-            font-size: 10px;
-            width: 100%;
-            overflow:hidden;
-            margin: 0;
-        }
-
-        @page {
-            size: A4;
-        }
-
-        .page-title {
-            margin: 0;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .page-title-description {
-            margin: 0;
-            text-align: center;
-            font-style: italic;
-        }
-
-        .content {
-            margin-top: 20px;
-            display: -webkit-flex;
-            -webkit-flex-direction: column;
-        }
-
-        .row:not(:last-child) {
-            display: -webkit-flex;
-            -webkit-flex-direction: row;
-            margin-bottom: 50px;
-        }
-
-        .column {
-            -webkit-flex: 1;
-        }
-
-        .title {
-            font-weight: bold;
-        }
-
-        p {
-            margin: 1px;
-        }
-
         .info-table .tr .td:first-child {
             -webkit-justify-content: flex-end;
             font-weight: bold;
@@ -77,7 +29,7 @@ head
             margin-bottom: 20px;
         }
 
-        .signature-container .tr .td:first-child{
+        .signature-container .tr .td:first-child {
             max-width: 80px;
         }
 
@@ -85,61 +37,7 @@ head
             max-width: 300px;
         }
 
-        .line {
-            width: 150px;
-            border-bottom: 1px solid black;
-        }
-
-        .error {
-            color: red;
-            border: 1px solid red;
-        }
-
-        .table {
-            display: -webkit-flex;
-            -webkit-flex-flow: column nowrap;
-            line-height: 1.5;
-            -webkit-flex: 1 1 auto;
-        }
-
-        .th {
-            display: none;
-            font-weight: 700;
-            text-decoration: underline;
-        }
-
-        .th > .td {
-            white-space: normal;
-            -webkit-justify-content: center;
-        }
-
-        .tr {
-            display:-webkit-flex;
-            -webkit-flex-flow: row nowrap;
-            margin: 1px;
-        }
-
-        .tfoot {
-            font-weight: bold;
-        }
-
-        .tr.tr-centered .td {
-            -webkit-justify-content: center;
-            -webkit-align-content: center;
-        }
-
-        .td {
-            display: -webkit-flex;
-            -webkit-flex-flow: row nowrap;
-            -webkit-flex-grow: 1;
-            -webkit-flex-basis: 0;
-            padding: 0.2em;
-            word-break: break-word;
-            overflow: hidden;
-            min-width: 0px;
-            -webkit-flex-wrap: wrap;
-        }
-body
+block content
     div
         h1.page-title Packing List
         p.page-title-description This material is used for feed production purpose only
@@ -206,7 +104,7 @@ body
                         .td Seal
                         .td Net (lb.)
                         .td Net (kg)
-                    if (packingList === undefined || packingList.length ===0)
+                    if (packingList === undefined || packingList.length === 0)
                         span.error Needs Data
                     else
                         each packing in packingList

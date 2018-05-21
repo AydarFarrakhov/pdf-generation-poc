@@ -3,7 +3,7 @@ import { storeFile } from './filesService';
 const pdf = require('html-pdf');
 const pug = require('pug');
 
-const template = Assets.absoluteFilePath('template.pug');
+const template = Assets.absoluteFilePath('packingList.pug');
 
 const options = {
   format: 'A4',
